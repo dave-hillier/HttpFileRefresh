@@ -18,13 +18,13 @@ namespace HttpFileRefresh
 
   // this class provides authentication in a very similar way to https://github.com/aspnet/Configuration/blob/cfe8c9ee/src/Config.AzureKeyVault/AzureKeyVaultConfigurationExtensions.cs#L68
   // however, I have chosen to use the delegating handler so that the token can be used on multiple requests and new one obtained when expired.
-  public class AuthorizationHandler : DelegatingHandler
+  public class AadAuthorizationHandler : DelegatingHandler
   {
     private AadAuthOptions _options;
     private string AccessToken = null;
     private DateTimeOffset ExpiresOn;
 
-    public AuthorizationHandler(IOptions<AadAuthOptions> options)
+    public AadAuthorizationHandler(IOptions<AadAuthOptions> options)
     {
       _options = options.Value;
     }
