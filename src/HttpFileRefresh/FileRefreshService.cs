@@ -40,7 +40,7 @@ namespace HttpFileRefresh
         var response = await _client.GetAsync(_options.Uri);
         using (var file = File.Create(_options.Path))
         {
-          Logger.LogDebug($"Writing to file {file}...");
+          Logger.LogDebug($"Writing to {_options.Path}...");
           await response.Content.CopyToAsync(file);
         }
         Logger.LogDebug($"Delaying task for {_options.Interval}");
