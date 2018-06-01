@@ -28,11 +28,13 @@ namespace HttpFileRefresh.Example
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IHostedService, FileRefreshService>();
+            services.Configure<AadAuthOptions>(Configuration.GetSection("auth"));
             services.AddSingleton<AadAuthorizationHandler>();
             services.AddHttpClient("filerefresh").AddHttpMessageHandler<AadAuthorizationHandler>();
-            services.Configure<AadAuthOptions>(Configuration.GetSection("auth"));
+
+
             services.Configure<FileRefreshServiceOptions>(Configuration.GetSection("filerefresh"));
+            services.AddSingleton<IHostedService, FileRefreshService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
