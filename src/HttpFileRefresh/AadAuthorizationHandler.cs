@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
@@ -24,22 +25,29 @@ namespace HttpFileRefresh
     private string AccessToken = null;
     private DateTimeOffset ExpiresOn;
 
-    public AadAuthorizationHandler(IOptions<AadAuthOptions> options)
+    public ILogger<AadAuthorizationHandler> Logger { get; }
+
+    public AadAuthorizationHandler(ILogger<AadAuthorizationHandler> logger, IOptions<AadAuthOptions> options)
     {
       _options = options.Value;
+      Logger = logger;
     }
 
     private async Task<string> GetAuthToken()
     {
       if (AccessToken != null && (ExpiresOn - TimeSpan.FromSeconds(1)) > DateTime.UtcNow) // TODO: configure timespan before expiry
+      {
+        Logger.LogTrace("Returning cached token.");
         return AccessToken;
-
+      }
+      Logger.LogTrace("Acquiring Token...");
       var cc = new ClientCredential(_options.ClientId, _options.ClientSecret);
       var ctx = new AuthenticationContext(_options.Authority);
       var tk = await ctx.AcquireTokenAsync(_options.Resource, cc);
 
       AccessToken = tk.AccessToken;
       ExpiresOn = tk.ExpiresOn;
+      Logger.LogTrace($"Token: {tk.AccessToken} expiry: {tk.ExpiresOn}");
       return tk.AccessToken;
     }
 
