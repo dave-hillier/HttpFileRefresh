@@ -11,7 +11,7 @@ Simple example:
   services.Configure<FileRefreshServiceOptions>(options => {
     options.ClientName = "client";
     options.Interval = TimeSpan.FromMinutes(60);
-    options.Uri = new Uri("https://https://httpbin.org/get");
+    options.Uri = new Uri("https://httpbin.org/get");
     options.Path = "whatever.json";
   });
   services.AddSingleton<IHostedService, FileRefreshService>();
